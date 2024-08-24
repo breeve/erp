@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package erp;
+
+import "google/protobuf/empty.proto"; 
+
+option go_package = "github.com/breeve/erp/apis;pb";
+
+service MarketService {
+    rpc Echo(google.protobuf.Empty) returns (Hello) {}
+}
+
+message Hello {
+    string message = 1;
+}
