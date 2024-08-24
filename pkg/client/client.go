@@ -1,61 +1,58 @@
 package client
 
 import (
-	"os"
-	"path/filepath"
-
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
-// Show a navigable tree view of the current directory.
 func Run() {
-	rootDir := "."
-	root := tview.NewTreeNode(rootDir).
-		SetColor(tcell.ColorRed)
-	tree := tview.NewTreeView().
-		SetRoot(root).
-		SetCurrentNode(root)
+	app := tview.NewApplication()
 
-	// A helper function which adds the files and directories of the given path
-	// to the given target node.
-	add := func(target *tview.TreeNode, path string) {
-		files, err := os.ReadDir(path)
-		if err != nil {
-			panic(err)
-		}
-		for _, file := range files {
-			node := tview.NewTreeNode(file.Name()).
-				SetReference(filepath.Join(path, file.Name())).
-				SetSelectable(file.IsDir())
-			if file.IsDir() {
-				node.SetColor(tcell.ColorGreen)
-			}
-			target.AddChild(node)
-		}
-	}
+	textView := tview.NewTextView().
+		SetDynamicColors(true).
+		SetRegions(true).
+		SetChangedFunc(func() {
+			app.Draw()
+		})
+	textView.SetBorder(true)
 
-	// Add the current directory to the root node.
-	add(root, rootDir)
+	left := tview.NewTreeNode("")
+	market := tview.NewTreeNode("market").
+		SetSelectable(true)
+	product := tview.NewTreeNode("product").
+		SetSelectable(true)
+	left.AddChild(market)
+	left.AddChild(product)
 
-	// If a directory was selected, open it.
-	tree.SetSelectedFunc(func(node *tview.TreeNode) {
-		reference := node.GetReference()
-		if reference == nil {
-			return // Selecting the root node does nothing.
+	leftTree := tview.NewTreeView().
+		SetRoot(left).
+		SetCurrentNode(left).
+		SetGraphics(false)
+
+	leftTree.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if event.Key() == tcell.KeyEnter {
+			leftTree.GetRoot().Walk(func(node, parent *tview.TreeNode) bool {
+				node.SetColor(tview.Styles.PrimaryTextColor)
+				return true
+			})
+
+			node := leftTree.GetCurrentNode()
+			node.SetColor(tcell.ColorGreen)
+
+			textView.SetText(node.GetText())
+
+			return nil
 		}
-		children := node.GetChildren()
-		if len(children) == 0 {
-			// Load and show files in this directory.
-			path := reference.(string)
-			add(node, path)
-		} else {
-			// Collapse if visible, expand if collapsed.
-			node.SetExpanded(!node.IsExpanded())
-		}
+
+		return event
 	})
+	leftTree.SetBorder(true)
 
-	if err := tview.NewApplication().SetRoot(tree, true).EnableMouse(true).Run(); err != nil {
+	flex := tview.NewFlex().
+		AddItem(leftTree, 0, 1, true).
+		AddItem(textView, 0, 11, false)
+
+	if err := app.SetRoot(flex, true).Run(); err != nil {
 		panic(err)
 	}
 }
