@@ -1,0 +1,18 @@
+syntax = "proto3";
+package erp.market.v1;
+option go_package = "github.com/breeve/erp/api/market/v1;market";
+
+import "google/protobuf/empty.proto"; 
+import "google/api/annotations.proto";
+
+service MarketService {
+    rpc Echo(google.protobuf.Empty) returns (Hello) {
+        option (google.api.http) = {
+            get : "/erp/market/echo"
+        };
+    }
+}
+
+message Hello {
+    string message = 1;
+}
