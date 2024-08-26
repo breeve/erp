@@ -41,3 +41,11 @@ client:
 
 .PHONY: build
 build: server client
+
+
+#  2026  go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+#  2028  go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
+#  2029  go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@latest
+#  2031  go install github.com/bufbuild/protoc-gen-validate@latest
+#  2033  go install github.com/envoyproxy/protoc-gen-validate@latest
+#  2016  go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
