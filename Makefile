@@ -8,9 +8,8 @@ generate_go:
 	--go_out=./pkg --go_opt=module=github.com/breeve/erp \
 	--go-grpc_out=./pkg --go-grpc_opt=module=github.com/breeve/erp \
 	--grpc-gateway_out=./pkg --grpc-gateway_opt=module=github.com/breeve/erp \
+	--validate_out=. --validate_opt=module=github.com/breeve/erp --validate_opt=lang=go \
     $(shell find ./pkg/pb -iname "*.proto" -not -path "./pkg/pb/third_party*")
-
-# --validate_out=. --validate_opt=module=github.com/breeve/erp --validate_opt=lang=go \
 
 # .PHONY: generate_openapi
 # # gen xxx.proto to openapi
